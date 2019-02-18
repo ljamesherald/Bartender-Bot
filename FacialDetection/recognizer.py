@@ -14,7 +14,6 @@ names = []
 #iniciate id counter
 id = 0
 
-# names related to ids: example ==> Marcelo: id=1,  etc
 uid = 0
 for picPath in picPaths:
     if(uid == int(os.path.split(picPath)[-1].split('.')[1])):
