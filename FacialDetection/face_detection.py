@@ -1,15 +1,25 @@
-import numpy as np
+
 import cv2
+import os
 
 face_cascade = cv2.CascadeClassifier('cascades/data/haarcascade_frontalface_alt2.xml')
-
-cap = cv2.VideoCapture(0)             #starts video
+path = "datasets"
+picPaths = [os.path.join(path,f) for f in os.listdir(path)]
+cam = cv2.VideoCapture(0)             #starts video
 count = 0
-face_id = input('\n Enter use id end press lasldsad')
+face_id = 0
+name = input("What is your name?")
+
+for picPath in picPaths:          #Gives each User unique Id number
+    while(face_id == int(os.path.split(picPath)[-1].split('.')[1])):
+        face_id = face_id + 1
+
+
+#print(face_id)
 while(True):
 
 # Captures img-by-img and is greyscale(how CV2 works)
-    ret, img = cap.read()
+    ret, img = cam.read()
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(gray, scaleFactor=1.5, minNeighbors=5)
     for (x,y,w,h) in faces:
@@ -18,14 +28,14 @@ while(True):
         stroke = 2
         end_cord_x = x + w
         end_cord_y = y + h
-        cv2.rectangle(img, (x,y), (end_cord_x, end_cord_y), color, stroke) #creates rectangle around face
+    #    cv2.rectangle(img, (x,y), (end_cord_x, end_cord_y), color, stroke) #creates rectangle around face
         count +=1
-        cv2.imwrite("datasets/User." + str(face_id) + '.' + str(count) + '.jpg', gray[y:y+h,x:x+w]) #stores jpgs into datasets folder... need to create datasets folder
+        cv2.imwrite("datasets/" + str(name) + '.' + str(face_id) + '.' + str(count) + '.jpg', gray[y:y+h,x:x+w]) #stores jpgs into datasets folder... need to create datasets folder
         cv2.imshow('image', img)
     k = cv2.waitKey(100) & 0xFF       #ESC key should allow to exit
     if k == 27:
         break
-    elif count >= 5:                  #Grabs 5 pics of face and then exits
+    elif count >= 15:                  #Grabs 15 pics of face and then exits
         break
 #Displays resulting img in actual color
 
@@ -33,5 +43,5 @@ while(True):
 
 #Create Recognizer
 
-cap.release()
+cam.release()
 cv2.destroyAllWindows()
