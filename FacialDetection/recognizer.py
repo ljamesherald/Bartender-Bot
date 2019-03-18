@@ -26,6 +26,7 @@ for picPath in picPaths:
 cam = cv2.VideoCapture(0)
 
 
+
 while True:
 
     ret, img = cam.read()
@@ -37,10 +38,12 @@ while True:
         scaleFactor = 1.2,
         minNeighbors = 5,
        )
+    k = 0
 
     for(x,y,w,h) in faces:
 
         cv2.rectangle(img, (x,y), (x+w,y+h), (0,255,0), 2)
+
 
         id, confidence = recognizer.predict(gray[y:y+h,x:x+w])
 
@@ -48,19 +51,25 @@ while True:
         if (confidence < 100):
             id = names[id]                         #maps name to id
             confidence = "  {0}%".format(round(100 - confidence))
+            k = 4
+            print("You are" + str(id) + "at a" + str(confidence) + "confidence")
+
         else:
             id = "unknown"
             confidence = "  {0}%".format(round(100 - confidence))
+            k = 4
+            print("You are" + id)
 
-        cv2.putText(img, str(id), (x+5,y-5), font, 1, (255,255,255), 2)
-        cv2.putText(img, str(confidence), (x+5,y+h-5), font, 1, (255,255,0), 1)
-        print("You are " + str(id))
+
+        #cv2.putText(img, str(id), (x+5,y-5), font, 1, (255,255,255), 2)
+        #cv2.putText(img, str(confidence), (x+5,y+h-5), font, 1, (255,255,0), 1)
+        #print("You are " + str(id))
 
     cv2.imshow('camera',img)
 
 
-    k = cv2.waitKey(10) & 0xff # ESC to exit
-    if k == 27:
+ #   k = cv2.waitKey(10) & 0xff # ESC to exit
+    if k == 4:
         break
 
 print("\n Exiting Program")
