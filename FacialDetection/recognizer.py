@@ -2,6 +2,7 @@
 
 import cv2
 import os
+import regex as re
 
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 recognizer.read('trainer/trainer.yml')                          #cv2 reads yml
@@ -13,15 +14,17 @@ font = cv2.FONT_HERSHEY_SIMPLEX
 names = []
 #iniciate id counter
 id = 0
+uid = 0    #counter for loop
 
-uid = 0
 for picPath in picPaths:
-    if(uid == int(os.path.split(picPath)[-1].split('.')[1])):
-        name = picPath[picPath.find('\\')+1 : picPath.find('.')]
+    m = re.findall("\d", picPath)  ###Does same thing face_detection
+    n = int(m[0])
+    if(uid == n):
+        name = picPath.split(".")[1]
         uid = uid + 1
         names.append(name)               #print each name to the names array names array is mapped to ID
 
-#print(names)
+
 
 cam = cv2.VideoCapture(0)
 
@@ -48,17 +51,19 @@ while True:
         id, confidence = recognizer.predict(gray[y:y+h,x:x+w])
 
         # Check if confidence is less them 100 ==> "0" is perfect match
-        if (confidence < 100):
+        if ((confidence < 100) & (confidence > 80)):
             id = names[id]                         #maps name to id
             confidence = "  {0}%".format(round(100 - confidence))
             k = 4
-            print("You are" + str(id) + "at a" + str(confidence) + "confidence")
+            print(str(id) + str(confidence))
+            #print("You are " + str(id) + " at a " + str(confidence) + " confidence.")
 
         else:
             id = "unknown"
             confidence = "  {0}%".format(round(100 - confidence))
             k = 4
-            print("You are" + id)
+            print(id)
+            #("You are" + id)
 
 
         #cv2.putText(img, str(id), (x+5,y-5), font, 1, (255,255,255), 2)

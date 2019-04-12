@@ -2,6 +2,8 @@ import cv2
 import numpy as np
 from PIL import Image
 import os
+import regex as re
+
 path = "datasets"
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 detector = cv2.CascadeClassifier('cascades/data/haarcascade_frontalface_alt2.xml')      #Can change if doesnt work well
@@ -14,7 +16,9 @@ def getPicsAndIds(path):
         PIL_pic = Image.open(picPath).convert('L') #Grayscale (cv2 works)
         pic_numpy = np.array(PIL_pic,'uint8') #Saves each image as numpy array
 
-        id = int(os.path.split(picPath)[-1].split('.')[1])   #grabs id
+        m = re.findall("\d", picPath)  ###Grabs all numbers in pic and puts into array
+        id = int(m[0])
+        #id = int(os.path.split(picPath)[-1].split('.')[1])   #grabs id
         faces = detector.detectMultiScale(pic_numpy) #grab face
 
 
